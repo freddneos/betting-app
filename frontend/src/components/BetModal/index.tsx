@@ -9,14 +9,16 @@ interface Event {
 interface BetModalProps {
   event: Event;
   onClose: () => void;
+  onPlaceBet: (amount: number) => void;
 }
 
-export const BetModal: React.FC<BetModalProps> = ({ event, onClose }) => {
+export const BetModal: React.FC<BetModalProps> = ({ event, onClose, onPlaceBet }) => {
   const [amount, setAmount] = useState<number | ''>('');
 
   const handleBet = () => {
-    console.log(`Bet placed on ${event.event_name} with amount: $${amount}`);
-    onClose();
+    if (amount) {
+      onPlaceBet(amount);
+    }
   };
 
   return (
