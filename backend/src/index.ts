@@ -1,11 +1,15 @@
 import express from "express";
 import morgan from "morgan";
-import logger from "./utils/logger"; // Import the logger
+import cors from "cors"; 
+import logger from "./utils/logger";
 import { AppDataSource } from "./data-source";
 import router from "./routes";
 
 const app = express();
 const PORT = process.env.PORT || 8083;
+
+// Enable CORS
+app.use(cors());
 
 // Setup morgan to log requests using winston
 app.use(
