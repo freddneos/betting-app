@@ -9,7 +9,7 @@ interface EventListProps {
 
 export const EventList: React.FC<EventListProps> = ({ events, onSelectEvent, userBalance }) => {
   return (
-    <div className="p-4">
+    <div className="p-1">
       <h2 className="text-xl font-bold mb-4">Available Events</h2>
       
       <div className="overflow-x-auto">
