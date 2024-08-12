@@ -28,8 +28,8 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
       return res.status(404).json({ message: "User not found" });
     }
 
-    req.user = user; // Attach the authenticated user to the request
-    next(); // Proceed to the next middleware or route handler
+    req.user = user;
+    next(); 
   } catch (error) {
     logger.error("Error authenticating token: " + (error as Error).message);
     return res.status(401).json({ message: "Invalid or expired token" });

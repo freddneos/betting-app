@@ -9,8 +9,8 @@ import logger from "../utils/logger";
 export class EventController {
   static getAll = async (req: Request, res: Response) => {
     logger.info("Fetching events...");
-    const page = parseInt(req.query.page as string, 10) || 1;  // Default to page 1
-    const pageSize = parseInt(req.query.pageSize as string, 10) || 20;  // Default to 10 items per page
+    const page = parseInt(req.query.page as string, 10) || 1;  
+    const pageSize = parseInt(req.query.pageSize as string, 10) || 20;  
 
     try {
       const eventRepository = AppDataSource.getRepository(Event);

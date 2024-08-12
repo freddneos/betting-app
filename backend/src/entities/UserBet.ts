@@ -8,11 +8,11 @@ export class UserBet {
   bet_id!: number;
 
   @ManyToOne(() => Event)
-  @JoinColumn({ name: 'event_id' })  // Explicitly define the foreign key column name
+  @JoinColumn({ name: 'event_id' })  
   event!: Event;
 
   @ManyToOne(() => User, user => user.bets)
-  @JoinColumn({ name: 'user_id' })  // Explicitly define the foreign key column name
+  @JoinColumn({ name: 'user_id' }) 
   user!: User;
 
   @Column('decimal', { precision: 18, scale: 8 })

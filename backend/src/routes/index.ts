@@ -1,8 +1,9 @@
-import { Router, Request } from "express";
+import { Router } from "express";
 import { SportController } from "../controllers/SportController";
 import { UserController } from "../controllers/UserController";
 import { EventController } from "../controllers/EventController";
 import { authenticateJWT } from "../middlewares/auth";
+import AuthController from "src/controllers/AuthController";
 
 const router = Router();
 
@@ -10,9 +11,12 @@ const router = Router();
 router.get('/sports', SportController.getAllSports);
 router.get('/sports/:sport_id/events', SportController.getEventsBySport);
 
+// Auth routes
+router.post("/signup", AuthController.signup);
+router.post("/login", AuthController.login);
+
+
 // User routes
-router.post('/auth/signup', UserController.createAccount);
-router.post('/auth/login', UserController.login);
 router.get('/my-bets', authenticateJWT, UserController.getMyBets);
 router.post('/place-bet', authenticateJWT, UserController.placeBet);
 

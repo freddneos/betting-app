@@ -32,7 +32,7 @@ export class SportController {
       const sportRepository = AppDataSource.getRepository(Sport);
       const sport = await sportRepository.findOne({
         where: { sport_id: Number(sport_id) },
-        relations: ["events"], // Load the related events
+        relations: ["events"], 
       });
 
       if (!sport) {

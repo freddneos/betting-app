@@ -1,87 +1,22 @@
-import jwt from 'jsonwebtoken';
-import { Request, Response } from "express";
+import {  Response } from "express";
 import { AppDataSource } from "../database/data-source";
 import { User } from "../entities/User";
 import { UserBet } from "../entities/UserBet";
 import { Event } from "../entities/Event";
-import argon2 from "argon2";
 import logger from "../utils/logger";
 import { AuthenticatedRequest } from "../middlewares/auth";
-import Big from 'big.js';
-
 
 const BALANCE_GRANT = 100;
 
 
 export class UserController {
-  static createAccount = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    logger.info(`Creating account for email: ${email}`);
-
-    try {
-      const userRepository = AppDataSource.getRepository(User);
-      const existingUser = await userRepository.findOne({ where: { email } });
-
-      if (existingUser) {
-        logger.info(`Email ${email} is already registered.`);
-        return res.status(400).json({ message: "Email is already registered." });
-      }
-
-      const hashedPassword = await argon2.hash(password);
-      const user = userRepository.create({ email, password: hashedPassword, balance: BALANCE_GRANT });
-      await userRepository.save(user);
-
-      logger.info(`Account created successfully for email: ${email}`);
-      res.status(201).json(user);
-    } catch (error) {
-      logger.error("Error creating account: " + (error as Error).message);
-      return res.status(500).json({ message: "Failed to create account." });
-    }
-  };
-
-  static login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    logger.info(`Attempting login for email: ${email}`);
-
-    try {
-      const userRepository = AppDataSource.getRepository(User);
-      const user = await userRepository.findOne({ where: { email } });
-
-      if (!user) {
-        logger.info(`Login failed for email: ${email} - User not found.`);
-        return res.status(401).json({ message: "Invalid credentials." });
-      }
-
-      const isPasswordValid = await argon2.verify(user.password, password);
-      if (!isPasswordValid) {
-        logger.info(`Login failed for email: ${email} - Invalid password.`);
-        return res.status(401).json({ message: "Invalid credentials." });
-      }
-
-      // Generate JWT Token
-      const jwtSecret = process.env.JWT_SECRET || 'mysecret001';  // Use a secure secret key from your environment variables
-      const jwtToken = jwt.sign({ userId: user.user_id }, jwtSecret, { expiresIn: '10h' });
-
-      user.jwt_token = jwtToken;
-      user.last_login = new Date();
-      await userRepository.save(user);
-
-      logger.info(`Login successful for email: ${email}`);
-      res.json({ token: jwtToken });
-    } catch (error) {
-      logger.error("Error during login: " + (error as Error).message);
-      return res.status(500).json({ message: "Failed to login." });
-    }
-  };
-
   static getMyBets = async (req: AuthenticatedRequest, res: Response) => {
-    const user_id = req.user!.user_id; // Access the authenticated user's ID
+    const user_id = req.user!.user_id; 
     logger.info(`Fetching bets for user_id: ${user_id}`);
     
     try {
       const userBetRepository = AppDataSource.getRepository(UserBet);
       
-      // Fetch the bets along with the associated event and sport data
       const userBets = await userBetRepository.find({
         where: { user: { user_id } },
         relations: ['event', 'event.sport'],
@@ -92,7 +27,6 @@ export class UserController {
         return res.status(404).json({ message: "No bets found." });
       }
 
-      // Map the bets to include the calculated field and sport data
       const betsWithEventData = userBets.map(bet => ({
         bet_id: bet.bet_id,
         amount: bet.amount,
@@ -120,7 +54,7 @@ export class UserController {
   };
 
   static placeBet = async (req: AuthenticatedRequest, res: Response) => {
-    const user_id = req.user!.user_id; // Access the authenticated user's ID
+    const user_id = req.user!.user_id; 
     const { event_id, amount } = req.body;
 
     if (!event_id || !amount || amount <= 0) {
@@ -152,11 +86,9 @@ export class UserController {
         return res.status(400).json({ message: "Insufficient balance." });
       }
 
-      // Deduct the amount from the user's balance
       user.balance -= amount;
       await userRepository.save(user);
 
-      // Create a new UserBet entry
       const userBet = userBetRepository.create({
         user,
         event,

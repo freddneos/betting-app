@@ -13,6 +13,6 @@ export class Event {
   odds!: number;
 
   @ManyToOne(() => Sport, sport => sport.events)
-  @JoinColumn({ name: 'sport_id' })  // Explicitly define the foreign key column name
+  @JoinColumn({ name: 'sport_id' }) 
   sport!: Sport;
 }

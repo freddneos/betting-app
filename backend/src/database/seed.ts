@@ -134,10 +134,10 @@ async function seed() {
       const users = await AppDataSource.getRepository(User).find();
       const events = await AppDataSource.getRepository(Event).find();
       const userBetsData = [
-        { event: events[0], user: users[0], amount: 0.1 }, // 0.1 Etherium
-        { event: events[1], user: users[0], amount: 0.2 }, // 0.2 Etherium
-        { event: events[2], user: users[1], amount: 0.3 }, // 0.3 Etherium
-        { event: events[3], user: users[1], amount: 0.4 }, // 0.4 Etherium
+        { event: events[0], user: users[0], amount: 0.1 }, 
+        { event: events[1], user: users[0], amount: 0.2 }, 
+        { event: events[2], user: users[1], amount: 0.3 }, 
+        { event: events[3], user: users[1], amount: 0.4 }, 
       ];
       await userBetRepository.save(userBetsData);
       logger.info("UserBets have been seeded.");
