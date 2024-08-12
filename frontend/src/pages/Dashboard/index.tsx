@@ -33,10 +33,15 @@ export const Dashboard: React.FC = () => {
 
   const handlePlaceBet = async (amount: number) => {
     if (selectedEvent) {
-      await placeBet(selectedEvent.event_id, amount);
-      setSelectedEvent(null);
-      const updatedUser = await me();
-      setUser(updatedUser);
+      try {
+        await placeBet(selectedEvent.event_id, amount);
+        setSelectedEvent(null);
+        const updatedUser = await me();
+        setUser(updatedUser);
+        alert('Bet placed successfully');  // Show success alert
+      } catch (error) {
+        console.error('Failed to place bet:', error);
+      }
     }
   };
 
