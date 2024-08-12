@@ -1,8 +1,9 @@
+import "reflect-metadata";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors"; 
 import logger from "./utils/logger";
-import { AppDataSource } from "./data-source";
+import { AppDataSource } from "./database/data-source";
 import router from "./routes";
 
 const app = express();
@@ -21,7 +22,7 @@ app.use(
 );
 
 app.use(express.json());
-app.use(router);
+app.use('/api/v1',router);
 
 // Initialize the data source
 AppDataSource.initialize()
