@@ -5,7 +5,7 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import logger from "../utils/logger";
 
-class AuthController {
+export class AuthController {
   static signup = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
@@ -56,4 +56,3 @@ class AuthController {
   };
 }
 
-export default AuthController;

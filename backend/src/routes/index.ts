@@ -2,8 +2,9 @@ import { Router } from "express";
 import { SportController } from "../controllers/SportController";
 import { UserController } from "../controllers/UserController";
 import { EventController } from "../controllers/EventController";
+import {AuthController} from "../controllers/AuthController";
+
 import { authenticateJWT } from "../middlewares/auth";
-import AuthController from "src/controllers/AuthController";
 
 const router = Router();
 
