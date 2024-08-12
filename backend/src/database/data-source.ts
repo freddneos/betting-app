@@ -20,16 +20,15 @@ export const AppDataSource = new DataSource({
   synchronize: process.env.DB_SYNCHRONIZE === "true", 
   logging: process.env.DB_LOGGING === "true", 
   entities: [Sport, Event, User, UserBet],
-  migrations: ["src/database/migrations/*.ts"],  // Ensure this matches your migration path
+  migrations: ["src/database/migrations/*.ts"],  
   subscribers: [],
 });
 
-// Initialize the data source
 AppDataSource.initialize()
   .then(() => {
     logger.info("Data Source has been initialized!");
   })
   .catch((error) => {
     logger.error("Error during Data Source initialization: " + error.message);
-    process.exit(1); // Exit the process with a failure code
+    process.exit(1); 
   });
