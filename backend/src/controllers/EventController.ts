@@ -4,8 +4,6 @@ import { Event } from "../entities/Event";
 import { QueryFailedError } from "typeorm";
 import logger from "../utils/logger";
 
-
-
 export class EventController {
   static getAll = async (req: Request, res: Response) => {
     logger.info("Fetching events...");
@@ -15,6 +13,7 @@ export class EventController {
     try {
       const eventRepository = AppDataSource.getRepository(Event);
       const [events, total] = await eventRepository.findAndCount({
+        relations: ["sport"], // Include the sport relation
         skip: (page - 1) * pageSize,
         take: pageSize,
       });
@@ -24,9 +23,15 @@ export class EventController {
         return res.status(404).json({ message: "No events found." });
       }
 
+      // Map the events to include sport_id
+      const eventsWithSportId = events.map(event => ({
+        ...event,
+        sport_id: event.sport.sport_id,
+      }));
+
       logger.info(`Retrieved ${events.length} events.`);
       res.json({
-        data: events,
+        data: eventsWithSportId,
         total,
         page,
         pageSize,
@@ -43,4 +48,3 @@ export class EventController {
     }
   };
 }
-

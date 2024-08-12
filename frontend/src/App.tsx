@@ -15,9 +15,7 @@ import { QueryClientProvider } from '@/context/QueryClientProvider';
     <AuthProvider>
       <BetProvider>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
+        <Route
             path="/"
             element={
               <ProtectedRoute>
@@ -25,6 +23,8 @@ import { QueryClientProvider } from '@/context/QueryClientProvider';
               </ProtectedRoute>
             }
           />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </BetProvider>
     </AuthProvider>

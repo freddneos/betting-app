@@ -20,6 +20,8 @@ router.post("/login", AuthController.login);
 // User routes
 router.get('/my-bets', authenticateJWT, UserController.getMyBets);
 router.post('/place-bet', authenticateJWT, UserController.placeBet);
+router.get("/me", authenticateJWT, AuthController.me);
+
 
 // Events
 router.get("/events", EventController.getAll);

@@ -25,6 +25,7 @@
       "@/api/*": ["./api/*"],
       "@/pages/*": ["./pages/*"],
       "@/context/*": ["./context/*"],
+      "@/hooks/*": ["./hooks/*"],
     }
   },
   "include": ["src"]

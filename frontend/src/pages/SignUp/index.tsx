@@ -1,12 +1,17 @@
+import { useAuth } from '@/hooks/useAuth';
 import React, { useState } from 'react';
 
 export const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { signup } = useAuth(); 
 
-  const handleSignup = () => {
-    console.log(`Signing up with email: ${email}`);
-    // Implement API call for signup
+  const handleSignup = async () => {
+    try {
+      await signup({email, password});
+    } catch (error) {
+      console.error('Failed to login:', error);
+    }
   };
 
   return (
@@ -34,6 +39,7 @@ export const Signup: React.FC = () => {
           />
         </div>
         <button className="btn btn-primary w-full" onClick={handleSignup}>Sign Up</button>
+        <button className="btn w-full" onClick={() => window.location.href = '/login'}>Login</button>
       </div>
     </div>
   );

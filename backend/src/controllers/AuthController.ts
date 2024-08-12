@@ -5,6 +5,8 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import logger from "../utils/logger";
 
+const SECRET = process.env.JWT_SECRET || 'mysecret001';
+
 export class AuthController {
   static signup = async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -22,7 +24,7 @@ export class AuthController {
       }
 
       const hashedPassword = await argon2.hash(password);
-      const user = userRepository.create({ email, password: hashedPassword });
+      const user = userRepository.create({ email, password: hashedPassword, balance: 100 });
       await userRepository.save(user);
 
       res.status(201).json({ message: "User registered successfully." });
@@ -47,12 +49,51 @@ export class AuthController {
         return res.status(401).json({ message: "Invalid email or password." });
       }
 
-      const token = jwt.sign({ user_id: user.user_id }, process.env.JWT_SECRET!, { expiresIn: "1h" });
+      // Check if the user already has a valid token
+      if (user.jwt_token) {
+        try {
+          jwt.verify(user.jwt_token, SECRET); // Verify if the existing token is still valid
+          return res.status(200).json({ message: "Login successful.", token: user.jwt_token });
+        } catch (err) {
+         return res.status(401).json({ message: "Invalid token." });
+        }
+
+      }
+
+      // Generate a new token
+      const token = jwt.sign({ user_id: user.user_id }, SECRET, { expiresIn: "1h" });
+      user.jwt_token = token;
+      await userRepository.save(user);
+
       res.status(200).json({ message: "Login successful.", token });
     } catch (error) {
       logger.error("Error logging in: " + (error as Error).message);
       res.status(500).json({ message: "Failed to log in." });
     }
   };
-}
 
+  static me = async (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({ message: "Authorization header is missing." });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    try {
+      const decoded: any = jwt.verify(token, SECRET);
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({ where: { user_id: decoded.user_id } });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+
+      res.status(200).json({ email: user.email, balance: user.balance });
+    } catch (error) {
+      logger.error("Error fetching user data: " + (error as Error).message);
+      res.status(500).json({ message: "Failed to fetch user data." });
+    }
+  };
+}

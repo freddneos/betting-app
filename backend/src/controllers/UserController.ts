@@ -10,55 +10,58 @@ const BALANCE_GRANT = 100;
 
 
 export class UserController {
-  static getMyBets = async (req: AuthenticatedRequest, res: Response) => {
-    const user_id = req.user!.user_id; 
-    logger.info(`Fetching bets for user_id: ${user_id}`);
-    
-    try {
-      const userBetRepository = AppDataSource.getRepository(UserBet);
+    static getMyBets = async (req: AuthenticatedRequest, res: Response) => {
+        const user_id = req.user!.user_id;
+        logger.info(`Fetching bets for user_id: ${user_id}`);
       
-      const userBets = await userBetRepository.find({
-        where: { user: { user_id } },
-        relations: ['event', 'event.sport'],
-      });
-
-      if (userBets.length === 0) {
-        logger.info(`No bets found for user_id: ${user_id}.`);
-        return res.status(404).json({ message: "No bets found." });
-      }
-
-      const betsWithEventData = userBets.map(bet => ({
-        bet_id: bet.bet_id,
-        amount: bet.amount,
-        event: {
-          event_id: bet.event.event_id,
-          event_name: bet.event.event_name,
-          odds: bet.event.odds,
-          sport: {
-            sport_id: bet.event.sport.sport_id,
-            name: bet.event.sport.name,
-            color: bet.event.sport.color,
-            emoji: bet.event.sport.emoji,
-            slug: bet.event.sport.slug,
+        try {
+          const userBetRepository = AppDataSource.getRepository(UserBet);
+      
+          const userBets = await userBetRepository.find({
+            where: { user: { user_id } },
+            relations: ['event', 'event.sport'],
+          });
+      
+          if (userBets.length === 0) {
+            logger.info(`No bets found for user_id: ${user_id}.`);
+            return res.status(200).json([]); // Return an empty array with 200 OK status
           }
-        },
-        possibleAmountToWin: bet.amount * bet.event.odds,
-      }));
-
-      logger.info(`Retrieved ${userBets.length} bets for user_id: ${user_id}.`);
-      res.json(betsWithEventData);
-    } catch (error) {
-      logger.error("Error fetching user bets: " + (error as Error).message);
-      return res.status(500).json({ message: "Failed to fetch user bets." });
-    }
-  };
+      
+          const betsWithEventData = userBets.map(bet => ({
+            user_id: bet.user?.user_id, // Optional chaining to prevent errors
+            bet_id: bet.bet_id,
+            amount: bet.amount,
+            event: {
+              event_id: bet.event?.event_id,
+              event_name: bet.event?.event_name,
+              odds: bet.event?.odds,
+              sport: {
+                sport_id: bet.event?.sport?.sport_id,
+                name: bet.event?.sport?.name,
+                color: bet.event?.sport?.color,
+                emoji: bet.event?.sport?.emoji,
+                slug: bet.event?.sport?.slug,
+              }
+            },
+            possibleAmountToWin: bet.amount * (bet.event?.odds || 0), // Default odds to 0 if undefined
+          }));
+      
+          logger.info(`Retrieved ${userBets.length} bets for user_id: ${user_id}.`);
+          res.json(betsWithEventData);
+        } catch (error) {
+          logger.error("Error fetching user bets: " + (error as Error).message);
+          return res.status(500).json({ message: "Failed to fetch user bets." });
+        }
+      };
+      
 
   static placeBet = async (req: AuthenticatedRequest, res: Response) => {
     const user_id = req.user!.user_id; 
     const { event_id, amount } = req.body;
 
-    if (!event_id || !amount || amount <= 0) {
-      logger.info(`Invalid bet placement attempt by user_id: ${user_id}`);
+    // Validate that event_id and amount are integers
+    if (!Number.isInteger(event_id) || !Number.isInteger(amount) || amount <= 0) {
+      logger.info(`Invalid bet placement attempt by user_id: ${user_id}. Amount: ${amount}, Event ID: ${event_id}`);
       return res.status(400).json({ message: "Invalid event ID or bet amount." });
     }
 

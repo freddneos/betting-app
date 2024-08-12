@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth'; // Import the useAuth hook
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    console.log(`Logging in with email: ${email}`);
+  const { login , isAuthenticated } = useAuth(); 
+  const handleLogin = async () => {
+    try {
+      await login({email, password});
+    } catch (error) {
+      console.error('Failed to login:', error);
+    }
   };
+
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -33,6 +39,7 @@ export const Login: React.FC = () => {
           />
         </div>
         <button className="btn btn-primary w-full" onClick={handleLogin}>Login</button>
+        <button className="btn w-full" onClick={() => window.location.href = '/signup'}>Sign Up</button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode } from 'react';
+import React, { createContext, ReactNode, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../api/client';
 
@@ -14,6 +14,7 @@ export const BetContext = createContext<BetContextType | undefined>(undefined);
 
 export const BetProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
 
   const { data: sports = [] } = useQuery({
     queryKey: ['sports'],
@@ -23,15 +24,18 @@ export const BetProvider = ({ children }: { children: ReactNode }) => {
     }
   });
 
-  const { data: events = [], refetch: fetchEventsBySport } = useQuery({
-    queryKey: ['events'],
-    enabled: false, // This query will not run automatically
-    queryFn: async ({ queryKey }) => {
-      const [, sportId] = queryKey as [string, number];
-      const { data } = await apiClient.get(`/sports/${sportId}/events`);
-      return data;
+  const { data: allEvents = [] } = useQuery({
+    queryKey: ['all-events'],
+    queryFn: async () => {
+      const { data: response } = await apiClient.get('/events');
+      return response.data;
     }
   });
+
+  const fetchEventsBySport = (sportId: number) => {
+    const eventsBySport = allEvents.filter((event: any) => event.sport?.sport_id === sportId);
+    setFilteredEvents(eventsBySport);
+  };
 
   const { data: myBets = [] } = useQuery({
     queryKey: ['my-bets'],
@@ -47,8 +51,8 @@ export const BetProvider = ({ children }: { children: ReactNode }) => {
       return data;
     },
     onSuccess: () => {
-      // Invalidate and refetch the 'my-bets' query to get the updated bets
       queryClient.invalidateQueries(['my-bets']);
+      queryClient.invalidateQueries(['me']); // Invalidate 'me' to refetch user data (balance)
     },
     onError: (error) => {
       console.error('Error placing bet:', error);
@@ -61,7 +65,7 @@ export const BetProvider = ({ children }: { children: ReactNode }) => {
 
   const contextValue = {
     sports,
-    events,
+    events: filteredEvents.length ? filteredEvents : allEvents,
     myBets,
     fetchEventsBySport,
     placeBet,

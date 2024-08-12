@@ -44,7 +44,7 @@ async function seed() {
       CREATE TABLE event (
         event_id SERIAL PRIMARY KEY,
         event_name VARCHAR NOT NULL,
-        odds NUMERIC(5, 2) NOT NULL,
+        odds INTEGER NOT NULL,  -- Use INTEGER for odds
         sport_id INTEGER REFERENCES sport(sport_id)
       )
     `);
@@ -54,7 +54,7 @@ async function seed() {
         user_id SERIAL PRIMARY KEY,
         email VARCHAR NOT NULL,
         password VARCHAR NOT NULL,
-        balance NUMERIC(18, 8) NOT NULL,
+        balance INTEGER NOT NULL,  -- Use INTEGER for balance
         jwt_token VARCHAR,
         last_login TIMESTAMP,
         last_bet TIMESTAMP
@@ -66,7 +66,7 @@ async function seed() {
         bet_id SERIAL PRIMARY KEY,
         event_id INTEGER REFERENCES event(event_id),
         user_id INTEGER REFERENCES "user"(user_id),
-        amount NUMERIC(18, 8) NOT NULL
+        amount INTEGER NOT NULL  -- Use INTEGER for amount
       )
     `);
 
@@ -93,11 +93,11 @@ async function seed() {
     if (eventCount === 0) {
       const sports = await AppDataSource.getRepository(Sport).find();
       const eventsData = [
-        { event_name: "Team A vs. Team B", odds: 1.75, sport: sports[0] },
-        { event_name: "Team C vs. Team D", odds: 2.10, sport: sports[1] },
-        { event_name: "Player E vs. Player F", odds: 1.95, sport: sports[2] },
-        { event_name: "Team G vs. Team H", odds: 3.25, sport: sports[3] },
-        { event_name: "Team I vs. Team J", odds: 2.50, sport: sports[4] },
+        { event_name: "Team A vs. Team B", odds: 175, sport: sports[0] },  // Example of odds as integer (1.75 -> 175)
+        { event_name: "Team C vs. Team D", odds: 210, sport: sports[1] },
+        { event_name: "Player E vs. Player F", odds: 195, sport: sports[2] },
+        { event_name: "Team G vs. Team H", odds: 325, sport: sports[3] },
+        { event_name: "Team I vs. Team J", odds: 250, sport: sports[4] },
       ];
       await eventRepository.save(eventsData);
       logger.info("Events have been seeded.");
@@ -113,12 +113,12 @@ async function seed() {
         {
           email: "user1@example.com",
           password: await argon2.hash("password123"),
-          balance: 1.5, // Assume 1.5 Etherium
+          balance: 150,  // Example balance as integer (1.5 -> 150)
         },
         {
           email: "user2@example.com",
           password: await argon2.hash("password123"),
-          balance: 2.0, // Assume 2.0 Etherium
+          balance: 200,  // Example balance as integer (2.0 -> 200)
         },
       ];
       await userRepository.save(usersData);
@@ -134,10 +134,10 @@ async function seed() {
       const users = await AppDataSource.getRepository(User).find();
       const events = await AppDataSource.getRepository(Event).find();
       const userBetsData = [
-        { event: events[0], user: users[0], amount: 0.1 }, 
-        { event: events[1], user: users[0], amount: 0.2 }, 
-        { event: events[2], user: users[1], amount: 0.3 }, 
-        { event: events[3], user: users[1], amount: 0.4 }, 
+        { event: events[0], user: users[0], amount: 10 },  
+        { event: events[1], user: users[0], amount: 20 },  
+        { event: events[2], user: users[1], amount: 30 },  
+        { event: events[3], user: users[1], amount: 40 },  
       ];
       await userBetRepository.save(userBetsData);
       logger.info("UserBets have been seeded.");
