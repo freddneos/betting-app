@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:14
+FROM node:18
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -13,5 +13,11 @@ RUN npm install
 # Copy the rest of the application files
 COPY . .
 
-# Command to run the application with hot-reloading
-CMD ["npm", "run", "dev"]
+# Install TypeScript globally
+RUN npm install -g ts-node typescript
+
+# Expose the port the app runs on
+EXPOSE 8083
+
+# Run the seed script and then start the app
+CMD ["sh", "-c", "npm run seed && npm run dev"]
