@@ -14,8 +14,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/big.js": "^6.2.2",
     "@types/jsonwebtoken": "^9.0.6",
     "argon2": "^0.40.3",
+    "big.js": "^6.2.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
