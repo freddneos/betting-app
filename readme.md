@@ -118,3 +118,6 @@ Ensure you have the following installed on your development machine:
     ```
 
 This structured approach ensures the Betting Dashboard is easy to deploy, maintain, and scale. The combination of Docker for containerization, React for the frontend, and Node.js with TypeORM for the backend makes this a robust and modern web application solution.
+
+<img width="974" alt="image" src="https://github.com/user-attachments/assets/b736fb02-3127-42ed-a887-6c4068d97fbc">
+
