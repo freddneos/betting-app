@@ -55,13 +55,13 @@ export class AuthController {
           jwt.verify(user.jwt_token, SECRET); // Verify if the existing token is still valid
           return res.status(200).json({ message: "Login successful.", token: user.jwt_token });
         } catch (err) {
-         return res.status(401).json({ message: "Invalid token." });
+         return res.status(401).json({ message: "Invalid token." + (err as Error).message });
         }
 
       }
 
       // Generate a new token
-      const token = jwt.sign({ user_id: user.user_id }, SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ user_id: user.user_id }, SECRET, { expiresIn: "10h" });
       user.jwt_token = token;
       await userRepository.save(user);
 

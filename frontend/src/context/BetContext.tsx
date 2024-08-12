@@ -1,41 +1,15 @@
 import React, { createContext, ReactNode, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../api/client';
-
-export interface Sport {
-  sport_id: number;
-  name: string;
-  color: string;
-  emoji: string;
-  slug: string;
-}
-
-export interface Event {
-  event_id: number;
-  event_name: string;
-  odds: number;
-  sport: Sport;
-  sport_id: number;
-}
-
-export interface Bet {
-  bet_id: number;
-  amount: number;
-  event: {
-      event_id: number;
-      event_name: string;
-      odds: number;
-      sport: Sport;
-  };
-  possibleAmountToWin: number;
-}
-
+import { Sport } from '@/types/Sport';
+import { Bet } from '@/types/Bet';
+import { Event } from '@/types/Event';
 
 interface BetContextType {
   sports: Sport[];
   events: Event[];
   myBets: Bet[];
-  fetchEventsBySport: (sportId: number) => void;
+  fetchEventsBySport: (sportId: number | null) => void;
   placeBet: (eventId: number, amount: number) => void;
 }
 
@@ -61,9 +35,13 @@ export const BetProvider = ({ children }: { children: ReactNode }) => {
     }
   });
 
-  const fetchEventsBySport = (sportId: number) => {
-    const eventsBySport = allEvents.filter((event: Event) => event.sport?.sport_id === sportId);
-    setFilteredEvents(eventsBySport);
+  const fetchEventsBySport = (sportId: number | null) => {
+    if (sportId === null) {
+      setFilteredEvents(allEvents);
+    } else {
+      const eventsBySport = allEvents.filter((event: Event) => event.sport?.sport_id === sportId);
+      setFilteredEvents(eventsBySport);
+    }
   };
 
   const { data: myBets = [] } = useQuery({
@@ -80,8 +58,8 @@ export const BetProvider = ({ children }: { children: ReactNode }) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['my-bets']);
-      queryClient.invalidateQueries(['me']);
+      queryClient.invalidateQueries({ queryKey: ['my-bets'] });
+      queryClient.invalidateQueries({ queryKey: ['me'] });
     },
     onError: (error) => {
       console.error('Error placing bet:', error);

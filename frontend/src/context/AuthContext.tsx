@@ -62,9 +62,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return response.data;
     },
     enabled: !!token,
-    onError: (error) => {
-      console.error('Failed to fetch user data', error);
-    },
   });
 
   const logout = () => {

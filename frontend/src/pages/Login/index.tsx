@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth'; // Import the useAuth hook
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login , isAuthenticated } = useAuth(); 
+  const { login  } = useAuth(); 
   const handleLogin = async () => {
     try {
       await login({email, password});

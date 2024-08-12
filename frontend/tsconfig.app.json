@@ -26,6 +26,7 @@
       "@/pages/*": ["./pages/*"],
       "@/context/*": ["./context/*"],
       "@/hooks/*": ["./hooks/*"],
+      "@/types/*": ["./types/*"],
     }
   },
   "include": ["src"]

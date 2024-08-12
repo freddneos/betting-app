@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useBet } from '@/hooks/useBet';
 import { EventList } from '@/components/EventList';
 import { BetModal } from '@/components/BetModal';
+import { Event } from '@/types/Event';
 
 export const Dashboard: React.FC = () => {
   const { me, logout } = useAuth(); 
@@ -76,16 +77,38 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
-      <EventList events={events} onSelectEvent={setSelectedEvent} />
+      <EventList events={events} onSelectEvent={setSelectedEvent} userBalance={user.balance} />
 
-      <h2 className="text-xl font-bold mt-8">My Bets</h2>
-      <ul>
-        {myBets.map((bet) => (
-          <li key={bet.bet_id} className="mb-4">
-            Bet on {bet.event.event_name} (Odds: {bet.event.odds}): Bet Amount: {bet.amount} - Possible Win: {bet.possibleAmountToWin}
-          </li>
-        ))}
-      </ul>
+      <h2 className="text-xl font-bold mt-8 mb-4">My Bets</h2>
+      
+      {/* Styled Table for My Bets */}
+      <div className="overflow-x-auto">
+        <table className="table-auto w-full text-left bg-gray-800 text-white rounded-lg shadow-lg">
+          <thead className="bg-gray-700">
+            <tr>
+              <th className="px-4 py-2">Event</th>
+              <th className="px-4 py-2">Sport</th>
+              <th className="px-4 py-2">Bet Amount</th>
+              <th className="px-4 py-2">Odds</th>
+              <th className="px-4 py-2">Possible Win</th>
+            </tr>
+          </thead>
+          <tbody>
+            {myBets.map((bet) => (
+              <tr key={bet.bet_id} className="hover:bg-gray-700">
+                <td className="border-t border-gray-700 px-4 py-2">{bet.event.event_name}</td>
+                <td className="border-t border-gray-700 px-4 py-2 flex items-center">
+                  <span className="text-2xl mr-2">{bet.event.sport.emoji}</span>
+                  {bet.event.sport.name}
+                </td>
+                <td className="border-t border-gray-700 px-4 py-2">{bet.amount} ETH</td>
+                <td className="border-t border-gray-700 px-4 py-2">{bet.event.odds / 100}</td>
+                <td className="border-t border-gray-700 px-4 py-2">{bet.possibleAmountToWin / 100} ETH</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {selectedEvent && (
         <BetModal
