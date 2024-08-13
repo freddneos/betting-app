@@ -39,7 +39,7 @@ export const Login: React.FC = () => {
           />
         </div>
         <button className="btn btn-primary w-full" onClick={handleLogin}>Login</button>
-        <button className="btn w-full" onClick={() => window.location.href = '/signup'}>Sign Up</button>
+{/*         <button className="btn w-full" onClick={() => window.location.href = '/signup'}>Sign Up</button> */}
       </div>
     </div>
   );
