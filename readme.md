@@ -98,8 +98,9 @@ Ensure you have the following installed on your development machine:
     - Launch PostgreSQL, backend, and frontend services in separate containers.
 
 3. **Access the application:**
-    - **Backend API**: `http://localhost:8083`
-    - **Frontend**: `http://localhost:5137`
+    - **APLICATION RUNNING**: `http://localhost:5173`
+
+if you wan to check the APIS -> `http://localhost:8083`
 
 4. ***Login with seeded user:**
     - email: user1@example.com
