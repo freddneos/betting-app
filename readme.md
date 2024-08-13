@@ -121,3 +121,23 @@ This structured approach ensures the Betting Dashboard is easy to deploy, mainta
 
 <img width="974" alt="image" src="https://github.com/user-attachments/assets/b736fb02-3127-42ed-a887-6c4068d97fbc">
 
+
+### Improvements List
+
+- BACKEND
+  > Integration Tests - JEST + SUPERTEST for the Controlllers and APIS
+  > Cache Layer with REDIS
+  > Repository pattern to make it less dependent on the implementation and library
+  > Security - The JWT implementation was a basic one without token refresh or invalidation
+  > Monitoring tool
+- FRONTEND
+  > Component Test
+  > E2E Test with Cypress or playright
+  > Component refinement (For the time constraints some components was attached to the screens)
+  > Segregation of the logic and dummy components (I love the approach to have the logic complete apart from the component rendering (dummy components))
+  > Server components (Maybe?)
+
+
+
+
+
